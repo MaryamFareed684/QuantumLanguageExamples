@@ -1,0 +1,4 @@
+// Exact messages of common TypeErrors.
+const u = undefined, n = null, o = {}, a = [], num = 1;
+const t = [() => u.x, () => n.x, () => u[0], () => o.x.y, () => o.f(), () => a.f(), () => num.f(), () => "s".f(), () => o.a.b.c, () => u(), () => o(), () => num(), () => new o(), () => new num(), () => new (() => {})(), () => o.x(), () => o["k" + 1](), () => a[0](), () => (function () {})()(), () => u.x(), () => { const { x } = u; }, () => { const [y] = n; }, () => { for (const z of num); }, () => [...u], () => new Set(num), () => Object.defineProperty(1, "a", {}), () => null instanceof 1, () => "a" in "b", () => Reflect.ownKeys(1), () => Object.setPrototypeOf({}, 1), () => class extends 1 {}, () => new Proxy({}, null)];
+for (const f of t) { try { console.log("ok", f()); } catch (e) { console.log(e.name, "|", e.message); } }

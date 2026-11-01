@@ -1,0 +1,8 @@
+// Controlling how objects print with util.inspect.custom.
+const { inspect } = require("util"); const cu = inspect.custom;
+class Money { constructor(v) { this.v = v; } [cu](depth, opts, ins) { return `Money(${ins(this.v, opts)}) d=${depth}`; } }
+console.log(new Money(1), [new Money("s")], { m: new Money({ a: { b: { c: 1 } } }) }, inspect(new Money(2), { depth: 0 }), `${inspect(new Money(3))}`);
+class H { [cu]() { return { hidden: true }; } } class S { [cu]() { return "no quotes"; } } class N { [cu]() { return 5; } } console.log(new H(), new S(), new N(), { a: new S() }, [new N()]);
+class T { get [Symbol.toStringTag]() { return "MyTag"; } } class Sub extends T { x = 1; } console.log(new T(), new Sub(), Object.create(new T()), Object.create(null, { [Symbol.toStringTag]: { value: "Nul" } }));
+const fn = () => {}; fn.extra = 1; class K { static s = 1; } function F() {} F.prototype.p = 1; console.log(fn, K, F, new F(), Object.assign(() => {}, { a: 1 }), Object.assign([1], { x: 2 }), Object.assign(new Date(0), { y: 3 }), Object.assign(/r/, { z: 4 }), Object.assign(new Error("e"), {}).message, Object.assign(new Map(), { w: 1 }), new Boolean(true), new Number(-0), new String("s"), Object(1n), Object(Symbol("q")));
+console.log(new (class extends Array {})(2), new (class Foo extends Set {})([1]), new (class extends Map {})(), new (class E2 extends Error {})("m").message, async () => {}, function* gen() {}, async function* ag() {}, class extends Object {}, Math, JSON, globalThis === global, Reflect, Atomics === undefined, Intl.constructor.name, new Proxy({ a: 1 }, {}), new Proxy([], {}), new Proxy(() => {}, {}), Promise.resolve(1), Promise.reject(new Error("x")).catch(() => 0) && 1, new WeakRef({}) instanceof WeakRef);

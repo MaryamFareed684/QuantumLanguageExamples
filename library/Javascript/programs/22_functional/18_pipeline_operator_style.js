@@ -1,0 +1,5 @@
+// Chained array transforms on a realistic dataset.
+const books = [{ t: "Dune", a: "Herbert", y: 1965, r: 4.5, g: ["sf"] }, { t: "Emma", a: "Austen", y: 1815, r: 4.0, g: ["romance", "classic"] }, { t: "Neuromancer", a: "Gibson", y: 1984, r: 3.9, g: ["sf", "cyber"] }, { t: "Persuasion", a: "Austen", y: 1817, r: 4.2, g: ["romance"] }];
+console.log(books.filter((b) => b.y > 1900).map((b) => b.t).sort(), books.flatMap((b) => b.g).filter((g, i, a) => a.indexOf(g) === i), books.reduce((m, b) => ({ ...m, [b.a]: [...(m[b.a] ?? []), b.t] }), {}));
+const avg = (x) => x.reduce((a, b) => a + b, 0) / x.length; const authors = [...new Set(books.map((b) => b.a))].map((a) => ({ a, avg: +avg(books.filter((b) => b.a === a).map((b) => b.r)).toFixed(2), n: books.filter((b) => b.a === a).length })).sort((x, y) => y.avg - x.avg); console.log(authors);
+console.log(Object.entries(books.reduce((m, b) => { const d = Math.floor(b.y / 100) * 100; m[d] = (m[d] || 0) + 1; return m; }, {})), books.map(({ t, ...r }) => t.length + r.y), books.some((b) => b.g.includes("cyber")), books.find((b) => b.r < 4)?.t, books.findLast((b) => b.a === "Austen").t);

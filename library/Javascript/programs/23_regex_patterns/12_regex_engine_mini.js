@@ -1,0 +1,4 @@
+// A tiny backtracking regex matcher written by hand.
+function m(re, s) { const h = (r, t) => { if (!r) return true; if (r === "$") return !t; if (r[1] === "*") return st(r[0], r.slice(2), t); if (r[1] === "?") return (t && (r[0] === "." || r[0] === t[0]) && h(r.slice(2), t.slice(1))) || h(r.slice(2), t); if (t && (r[0] === "." || r[0] === t[0])) return h(r.slice(1), t.slice(1)); return false; }; const st = (c, r, t) => { for (let i = 0; ; i++) { if (h(r, t.slice(i))) return true; if (!(t[i] && (c === "." || c === t[i]))) return false; } }; if (re[0] === "^") return h(re.slice(1), s); for (let i = 0; i <= s.length; i++) if (h(re, s.slice(i))) return true; return false; }
+const cs = [["ab*c", "ac"], ["^ab", "cab"], ["a.c$", "xabc"], ["a?b", "b"], ["x*", ""], ["^a*$", "aaab"], ["c.*t", "a cat sat"]];
+for (const [r, s] of cs) console.log(r, s, m(r, s), new RegExp(r).test(s));

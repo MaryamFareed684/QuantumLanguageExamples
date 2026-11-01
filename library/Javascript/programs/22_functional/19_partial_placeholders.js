@@ -1,0 +1,4 @@
+// Partial application with placeholders and arity tricks.
+const _ = Symbol("hole"); const partial = (f, ...a) => (...b) => { const c = [...b]; return f(...a.map((x) => (x === _ ? c.shift() : x)), ...c); };
+console.log(partial((a, b, c) => [a, b, c], 1, _, 3)(2), partial((a, b, c) => [a, b, c], _, _, 3)(1, 2), partial(Math.pow, _, 2)(5), partial((...x) => x.length, 1, _)(2, 3, 4));
+const unary = (f) => (x) => f(x), arity = (n, f) => (...a) => f(...a.slice(0, n)), spread = (f) => (a) => f(...a), gather = (f) => (...a) => f(a), juxt = (...f) => (...a) => f.map((g) => g(...a)), converge = (f, gs) => (...a) => f(...gs.map((g) => g(...a))); console.log(["1", "2", "3"].map(unary(parseInt)), arity(1, (...a) => a)(1, 2), spread(Math.max)([1, 5]), gather((a) => a.length)(1, 2), juxt(Math.min, Math.max)(3, 1, 2), converge((s, n) => s / n, [(...a) => a.reduce((x, y) => x + y), (...a) => a.length])(1, 2, 3, 6));

@@ -1,0 +1,6 @@
+// Generic serialization walking types with constructors.
+const reg = new Map(); const reg1 = (C) => reg.set(C.name, C);
+class Pt { constructor(x, y) { this.x = x; this.y = y; } } class Box { constructor(a, b) { this.a = a; this.b = b; } } [Pt, Box].forEach(reg1);
+const ser = (v) => { if (Array.isArray(v)) return v.map(ser); if (v instanceof Date) return { $d: v.getTime() }; if (v instanceof Map) return { $m: [...v].map(ser) }; if (v instanceof Set) return { $s: [...v].map(ser) }; if (v && typeof v === "object") { const o = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, ser(x)])); return v.constructor !== Object ? { $t: v.constructor.name, ...o } : o; } return v; };
+const de = (v) => { if (Array.isArray(v)) return v.map(de); if (v && typeof v === "object") { if ("$d" in v) return new Date(v.$d); if ("$m" in v) return new Map(v.$m.map(de)); if ("$s" in v) return new Set(v.$s.map(de)); const { $t, ...r } = v; const o = Object.fromEntries(Object.entries(r).map(([k, x]) => [k, de(x)])); return $t ? Object.assign(Object.create(reg.get($t).prototype), o) : o; } return v; };
+const b = new Box(new Pt(1, 2), [new Date(0), new Map([[1, new Set([new Pt(3, 4)])]])]); const j = JSON.stringify(ser(b)); console.log(j); const r = de(JSON.parse(j)); console.log(r, r.a instanceof Pt, r.b[1].get(1).has(r.b[1].get(1).values().next().value), r.constructor.name);

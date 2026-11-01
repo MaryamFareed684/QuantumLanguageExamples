@@ -1,0 +1,6 @@
+// Morse code, Vigenere, atbash and rail-fence ciphers.
+const M = { a: ".-", b: "-...", c: "-.-.", d: "-..", e: ".", f: "..-.", g: "--.", h: "....", i: "..", j: ".---", k: "-.-", l: ".-..", m: "--", n: "-.", o: "---", p: ".--.", q: "--.-", r: ".-.", s: "...", t: "-", u: "..-", v: "...-", w: ".--", x: "-..-", y: "-.--", z: "--.." };
+const R = Object.fromEntries(Object.entries(M).map(([k, v]) => [v, k])); const mo = (s) => s.toLowerCase().split(" ").map((w) => [...w].map((c) => M[c]).join(" ")).join(" / "), un = (s) => s.split(" / ").map((w) => w.split(" ").map((x) => R[x]).join("")).join(" "); console.log(mo("sos help"), un(mo("sos help")));
+const vig = (t, k, d = 1) => { let i = 0; return t.replace(/[a-z]/g, (c) => String.fromCharCode(((c.charCodeAt(0) - 97 + d * (k.charCodeAt(i++ % k.length) - 97) + 26) % 26) + 97)); }; console.log(vig("attack at dawn", "lemon"), vig(vig("attack at dawn", "lemon"), "lemon", -1));
+const atb = (s) => s.replace(/[a-z]/g, (c) => String.fromCharCode(219 - c.charCodeAt(0))); console.log(atb("wizard"), atb(atb("wizard")));
+const rail = (s, n) => { const r = Array.from({ length: n }, () => ""); let i = 0, d = 1; for (const c of s) { r[i] += c; if (i === 0) d = 1; else if (i === n - 1) d = -1; i += d; } return r.join(""); }; console.log(rail("WEAREDISCOVERED", 3));

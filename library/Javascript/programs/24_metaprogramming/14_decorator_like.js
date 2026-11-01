@@ -1,0 +1,6 @@
+// Decorator-style wrappers for methods and classes.
+const dec = { log: (f, n, L) => function (...a) { L.push(`${n} in ${a}`); const r = f.apply(this, a); L.push(`${n} out ${r}`); return r; }, memo: (f) => { const c = new Map(); return function (...a) { const k = JSON.stringify(a); if (!c.has(k)) c.set(k, f.apply(this, a)); return c.get(k); }; }, once: (f) => { let d, v; return function (...a) { return d ? v : ((d = true), (v = f.apply(this, a))); }; }, validate: (f, c) => function (...a) { if (!c(...a)) throw new RangeError("invalid " + a); return f.apply(this, a); } };
+const decorate = (C, map) => { for (const [k, ds] of Object.entries(map)) C.prototype[k] = ds.reduce((f, d) => d(f, k), C.prototype[k]); return C; };
+const L = []; let calls = 0; class Calc { sq(x) { calls++; return x * x; } init() { return ++calls; } half(x) { return x / 2; } }
+decorate(Calc, { sq: [dec.memo, (f, n) => dec.log(f, n, L)], init: [dec.once], half: [(f) => dec.validate(f, (x) => x % 2 === 0)] }); const c = new Calc(); console.log(c.sq(3), c.sq(3), L, calls, c.init(), c.init(), c.half(4)); try { c.half(3); } catch (e) { console.log(e.message); }
+const sealed = (C) => { Object.seal(C); Object.seal(C.prototype); return C; }; class Z {} sealed(Z); Z.prototype.x = 1; console.log(Z.prototype.x, Object.isSealed(Z));

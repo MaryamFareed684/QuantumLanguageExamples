@@ -1,0 +1,5 @@
+// Bitmask DP: assignment problem and Hamiltonian counts.
+const cost = [[9, 2, 7, 8], [6, 4, 3, 7], [5, 8, 1, 8], [7, 6, 9, 4]];
+const assign = (c) => { const n = c.length, d = Array(1 << n).fill(Infinity); d[0] = 0; for (let m = 0; m < 1 << n; m++) { const i = m.toString(2).split("1").length - 1; if (i >= n) continue; for (let j = 0; j < n; j++) if (!(m & (1 << j))) d[m | (1 << j)] = Math.min(d[m | (1 << j)], d[m] + c[i][j]); } return d.at(-1); }; console.log(assign(cost));
+const ham = (g) => { const n = g.length, d = Array.from({ length: 1 << n }, () => Array(n).fill(0)); d[1][0] = 1; for (let m = 1; m < 1 << n; m++) for (let u = 0; u < n; u++) if (d[m][u]) for (let v = 0; v < n; v++) if (g[u][v] && !(m & (1 << v))) d[m | (1 << v)][v] += d[m][u]; return d.at(-1).reduce((a, b) => a + b); }; console.log(ham([[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]]));
+const sos = (a) => { const f = [...a]; for (let b = 0; b < 3; b++) for (let m = 0; m < 8; m++) if (m & (1 << b)) f[m] += f[m ^ (1 << b)]; return f; }; console.log(sos([1, 2, 3, 4, 5, 6, 7, 8]));

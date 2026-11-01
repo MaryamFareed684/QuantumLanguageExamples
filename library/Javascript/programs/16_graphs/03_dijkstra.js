@@ -1,0 +1,6 @@
+// Dijkstra's algorithm with a binary heap.
+const G = { A: { B: 7, C: 9, F: 14 }, B: { A: 7, C: 10, D: 15 }, C: { A: 9, B: 10, D: 11, F: 2 }, D: { B: 15, C: 11, E: 6 }, E: { D: 6, F: 9 }, F: { A: 14, C: 2, E: 9 }, Z: {} };
+class PQ { h = []; push(x) { const a = this.h; a.push(x); let i = a.length - 1; while (i && a[(i - 1) >> 1][0] > a[i][0]) { [a[i], a[(i - 1) >> 1]] = [a[(i - 1) >> 1], a[i]]; i = (i - 1) >> 1; } } pop() { const a = this.h, t = a[0], l = a.pop(); if (a.length) { a[0] = l; for (let i = 0; ;) { let m = i; for (const k of [2 * i + 1, 2 * i + 2]) if (k < a.length && a[k][0] < a[m][0]) m = k; if (m === i) break; [a[i], a[m]] = [a[m], a[i]]; i = m; } } return t; } get size() { return this.h.length; } }
+function dij(s) { const d = Object.fromEntries(Object.keys(G).map((k) => [k, Infinity])), prev = {}; d[s] = 0; const q = new PQ(); q.push([0, s]); while (q.size) { const [du, u] = q.pop(); if (du > d[u]) continue; for (const [v, w] of Object.entries(G[u])) if (du + w < d[v]) { d[v] = du + w; prev[v] = u; q.push([d[v], v]); } } return { d, prev }; }
+const { d, prev } = dij("A"); console.log(d);
+const route = (t) => { const o = [t]; while (prev[o[0]]) o.unshift(prev[o[0]]); return o.join(" "); }; console.log(route("E"), route("D"), route("Z"));

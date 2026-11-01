@@ -1,0 +1,4 @@
+// K-way merge of sorted lists using a small heap.
+class Heap { h = []; push(x) { const a = this.h; a.push(x); let i = a.length - 1; while (i && a[(i - 1) >> 1][0] > a[i][0]) { [a[(i - 1) >> 1], a[i]] = [a[i], a[(i - 1) >> 1]]; i = (i - 1) >> 1; } } pop() { const a = this.h, t = a[0], l = a.pop(); if (a.length) { a[0] = l; let i = 0; for (;;) { let m = i, p = 2 * i + 1, q = p + 1; if (p < a.length && a[p][0] < a[m][0]) m = p; if (q < a.length && a[q][0] < a[m][0]) m = q; if (m === i) break; [a[i], a[m]] = [a[m], a[i]]; i = m; } } return t; } get size() { return this.h.length; } }
+function kway(ls) { const h = new Heap(); ls.forEach((l, i) => l.length && h.push([l[0], i, 0])); const o = []; while (h.size) { const [v, i, j] = h.pop(); o.push(v); if (j + 1 < ls[i].length) h.push([ls[i][j + 1], i, j + 1]); } return o; }
+console.log(kway([[1, 4, 7], [2, 5], [], [0, 3, 6, 8]]));

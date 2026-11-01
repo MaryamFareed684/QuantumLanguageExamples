@@ -1,0 +1,3 @@
+// A gap buffer text editor model.
+class Gap { constructor() { this.l = []; this.r = []; } insert(s) { this.l.push(...s); return this; } left(n = 1) { while (n-- && this.l.length) this.r.push(this.l.pop()); return this; } right(n = 1) { while (n-- && this.r.length) this.l.push(this.r.pop()); return this; } back(n = 1) { while (n-- && this.l.length) this.l.pop(); return this; } toString() { return this.l.join("") + "|" + [...this.r].reverse().join(""); } }
+const g = new Gap(); console.log(String(g.insert("hello world")), String(g.left(6)), String(g.insert(",")), String(g.back(3)), String(g.right(100)), String(g.left(100)));
