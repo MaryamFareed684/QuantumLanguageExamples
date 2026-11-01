@@ -1,0 +1,5 @@
+// Trim, squeeze, title-case and format using replace.
+const squeeze = (s) => s.replace(/\s+/g, " ").trim(), title = (s) => s.replace(/\b\w/g, (c) => c.toUpperCase()), kebab = (s) => s.replace(/([a-z])([A-Z])/g, "$1-$2").replace(/[\s_]+/g, "-").toLowerCase(), camel = (s) => s.replace(/[-_\s]+(.)?/g, (_, c) => (c ?? "").toUpperCase()), strip = (s) => s.replace(/<[^>]*>/g, ""), mask = (s) => s.replace(/\d(?=\d{4})/g, "*"), commas = (n) => String(n).replace(/\B(?=(\d{3})+\b)/g, ",");
+console.log(squeeze("  a   b\n\t c "), title("hello big world"), kebab("someVar name_here"), camel("some-var name_here"), strip("<p>hi <b>there</b></p>"), mask("4111111111111111"), commas(1234567.5), commas(999));
+const tpl = (s, d) => s.replace(/\{(\w+)(?::(\w+))?\}/g, (m, k, f) => (k in d ? (f === "up" ? String(d[k]).toUpperCase() : d[k]) : m)); console.log(tpl("{a} {b:up} {c}", { a: 1, b: "x" }));
+const dedupe = (s) => s.replace(/\b(\w+)\s+\1\b/gi, "$1"); console.log(dedupe("the the cat sat sat on on on it"));

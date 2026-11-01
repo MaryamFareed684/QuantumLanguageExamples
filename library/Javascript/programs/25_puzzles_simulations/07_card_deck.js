@@ -1,0 +1,6 @@
+// A seeded deck: shuffling, dealing and poker hand ranks.
+let s = 7; const rnd = (n) => { s = (s * 16807) % 2147483647; return s % n; }; const ranks = "23456789TJQKA", suits = "shdc"; const deck = [...suits].flatMap((u) => [...ranks].map((r) => r + u));
+for (let i = deck.length - 1; i > 0; i--) { const j = rnd(i + 1); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+const rank = (h) => { const v = h.map((c) => ranks.indexOf(c[0])).sort((a, b) => b - a), c = {}; v.forEach((x) => (c[x] = (c[x] || 0) + 1)); const n = Object.values(c).sort((a, b) => b - a).join(""), fl = new Set(h.map((x) => x[1])).size === 1, st = new Set(v).size === 5 && v[0] - v[4] === 4; return st && fl ? "straight flush" : n === "41" ? "four" : n === "32" ? "full house" : fl ? "flush" : st ? "straight" : n === "311" ? "three" : n === "221" ? "two pair" : n === "2111" ? "pair" : "high"; };
+for (let i = 0; i < 5; i++) { const h = deck.slice(i * 5, i * 5 + 5); console.log(h.join(" "), rank(h)); } console.log(rank(["Ts", "Js", "Qs", "Ks", "As"]), rank(["2s", "2h", "2d", "3c", "3s"]), rank(["2s", "3h", "4d", "5c", "6s"]));
+const tally = {}; for (let t = 0; t < 3000; t++) { const d = [...deck]; for (let i = 0; i < 5; i++) { const j = i + rnd(52 - i); [d[i], d[j]] = [d[j], d[i]]; } const k = rank(d.slice(0, 5)); tally[k] = (tally[k] || 0) + 1; } console.log(tally);

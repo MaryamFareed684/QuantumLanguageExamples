@@ -1,0 +1,3 @@
+// RangeErrors and SyntaxErrors from built-ins.
+const t = [() => new Array(-1), () => new Array(1.5), () => [].length = -1, () => (1).toString(1), () => (1).toFixed(-1), () => (1).toPrecision(0), () => "a".repeat(Infinity), () => "a".normalize("X"), () => String.fromCodePoint(-1), () => new Date(NaN).toISOString(), () => BigInt(1.5), () => new Intl.NumberFormat("zz-invalid-locale-xx"), () => new ArrayBuffer(-1), () => JSON.parse(""), () => JSON.parse("[1,]"), () => JSON.parse("{'a':1}"), () => new RegExp("("), () => new RegExp("a", "zz"), () => new Function("return ("), () => eval("var"), () => eval("if"), () => 2n ** -1n, () => 1n / 0n];
+for (const f of t) { try { console.log("ok", f()); } catch (e) { console.log(e.name, "|", e.message); } }

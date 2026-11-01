@@ -1,0 +1,6 @@
+// Parser combinators for a little expression language.
+const ok = (v, r) => ({ v, r }); const ch = (p) => (s) => (s.startsWith(p) ? ok(p, s.slice(p.length)) : null), re = (x) => (s) => { const m = x.exec(s); return m && m.index === 0 ? ok(m[0], s.slice(m[0].length)) : null; };
+const seq = (...ps) => (s) => { const o = []; for (const p of ps) { const r = p(s); if (!r) return null; o.push(r.v); s = r.r; } return ok(o, s); }, alt = (...ps) => (s) => { for (const p of ps) { const r = p(s); if (r) return r; } return null; }, map = (p, f) => (s) => { const r = p(s); return r && ok(f(r.v), r.r); }, many = (p) => (s) => { const o = []; for (;;) { const r = p(s); if (!r) return ok(o, s); o.push(r.v); s = r.r; } }, tok = (p) => map(seq(p, re(/\s*/)), ([v]) => v), lazy = (f) => (s) => f()(s);
+const num = tok(map(re(/\d+/), Number)), atom = alt(num, map(seq(tok(ch("(")), lazy(() => expr), tok(ch(")"))), ([, e]) => e));
+const term = map(seq(atom, many(seq(tok(alt(ch("*"), ch("/"))), atom))), ([a, r]) => r.reduce((x, [o, y]) => (o === "*" ? x * y : x / y), a)), expr = map(seq(term, many(seq(tok(alt(ch("+"), ch("-"))), term))), ([a, r]) => r.reduce((x, [o, y]) => (o === "+" ? x + y : x - y), a));
+for (const s of ["1 + 2 * 3", "(1 + 2) * 3", "10 / 2 - 3", "x"]) console.log(s, expr(s));

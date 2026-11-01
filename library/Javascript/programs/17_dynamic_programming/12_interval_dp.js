@@ -1,0 +1,4 @@
+// Matrix chain, burst balloons and optimal merging.
+const chain = (p) => { const n = p.length - 1, d = Array.from({ length: n }, () => Array(n).fill(0)); for (let l = 2; l <= n; l++) for (let i = 0; i + l <= n; i++) { const j = i + l - 1; d[i][j] = Infinity; for (let k = i; k < j; k++) d[i][j] = Math.min(d[i][j], d[i][k] + d[k + 1][j] + p[i] * p[k + 1] * p[j + 1]); } return d[0][n - 1]; };
+console.log(chain([10, 30, 5, 60]), chain([40, 20, 30, 10, 30]));
+const burst = (a) => { const b = [1, ...a, 1], n = b.length, d = Array.from({ length: n }, () => Array(n).fill(0)); for (let g = 2; g < n; g++) for (let l = 0; l + g < n; l++) { const r = l + g; for (let k = l + 1; k < r; k++) d[l][r] = Math.max(d[l][r], d[l][k] + d[k][r] + b[l] * b[k] * b[r]); } return d[0][n - 1]; }; console.log(burst([3, 1, 5, 8]), burst([1, 5]));

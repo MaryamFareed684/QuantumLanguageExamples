@@ -1,0 +1,4 @@
+// Minesweeper numbers and reveal flood.
+const F = ["*....", ".....", ".*...", ".....", "....*"].map((r) => [...r]); const R = F.length, C = F[0].length; const cnt = (r, c) => { let n = 0; for (let a = -1; a < 2; a++) for (let b = -1; b < 2; b++) if (F[r + a]?.[c + b] === "*") n++; return n; };
+const N = F.map((r, i) => r.map((v, j) => (v === "*" ? "*" : cnt(i, j) || "."))); console.log(N.map((r) => r.join("")).join("\n"));
+const seen = F.map((r) => r.map(() => false)); const open = (r, c) => { if (r < 0 || c < 0 || r >= R || c >= C || seen[r][c] || F[r][c] === "*") return 0; seen[r][c] = true; let t = 1; if (!cnt(r, c)) for (let a = -1; a < 2; a++) for (let b = -1; b < 2; b++) t += open(r + a, c + b); return t; }; console.log(open(0, 4), open(4, 0)); console.log(seen.map((r, i) => r.map((s, j) => (s ? N[i][j] : "#")).join("")).join("\n"));

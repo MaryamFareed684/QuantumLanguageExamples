@@ -1,0 +1,3 @@
+// A vending machine state machine with change-making.
+class VM { stock = { cola: [125, 2], chips: [75, 0] }; bal = 0; insert(c) { if (![25, 50, 100].includes(c)) return `rejected ${c}`; this.bal += c; return `bal ${this.bal}`; } buy(k) { const it = this.stock[k]; if (!it) return "unknown"; if (!it[1]) return `${k} sold out`; if (this.bal < it[0]) return `need ${it[0] - this.bal}`; it[1]--; const ch = this.bal - it[0]; this.bal = 0; return `${k} change ${ch}`; } }
+const v = new VM(); console.log(v.insert(10), v.insert(100), v.buy("cola"), v.insert(50), v.buy("cola"), v.buy("chips"), v.buy("tea"), v.insert(100), v.buy("cola"), v.buy("cola"), v.stock);

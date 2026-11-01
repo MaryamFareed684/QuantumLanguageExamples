@@ -1,0 +1,6 @@
+// A tiny ORM: dynamic finders, validation and method chaining.
+class Model { static table = []; static create(o) { const r = new this(o); this.table.push(r); return r; } constructor(o) { Object.assign(this, o); } static where(q) { return new Query(this.table).where(q); } static get all() { return new Query(this.table); } }
+class Query { constructor(r) { this.r = r; } where(q) { return new Query(this.r.filter((x) => Object.entries(q).every(([k, v]) => x[k] === v))); } order(k) { return new Query([...this.r].sort((a, b) => (a[k] > b[k] ? 1 : -1))); } pluck(k) { return this.r.map((x) => x[k]); } get first() { return this.r[0]; } get count() { return this.r.length; } }
+const dyn = (C) => new Proxy(C, { get(t, k, r) { const m = /^findBy(\w+)$/.exec(String(k)); if (m) { const f = m[1].toLowerCase(); return (v) => t.where({ [f]: v }).first; } return Reflect.get(t, k, r); } });
+class User extends Model { static table = []; } const U = dyn(User); U.create({ name: "b", age: 3 }); U.create({ name: "a", age: 9 }); U.create({ name: "c", age: 3 });
+console.log(U.findByName("a"), U.findByAge(3).name, U.findByName("z"), U.where({ age: 3 }).order("name").pluck("name"), U.all.count, U.all.first instanceof User, Model.all.count);

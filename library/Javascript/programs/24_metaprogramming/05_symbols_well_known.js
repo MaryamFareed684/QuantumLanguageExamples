@@ -1,0 +1,7 @@
+// Well-known symbols customizing language behaviour.
+class Temp { constructor(d) { this.d = d; } [Symbol.toPrimitive](h) { return h === "string" ? `${this.d}C` : this.d; } static [Symbol.hasInstance](x) { return typeof x === "number"; } get [Symbol.toStringTag]() { return "Temp"; } }
+const t = new Temp(20); console.log(`${t}`, t + 1, t * 2, t > 10, 5 instanceof Temp, Object.prototype.toString.call(t), String(t));
+class Rev { [Symbol.iterator]() { let i = 3; return { next: () => ({ done: i === 0, value: i-- }) }; } } console.log([...new Rev()]);
+const m = { [Symbol.match](s) { return s.includes("x") ? ["matched"] : null; }, [Symbol.replace](s, r) { return s + r; }, [Symbol.search]() { return 7; }, [Symbol.split](s) { return [...s].reverse(); } }; console.log("axb".match(m), "ab".replace(m, "!"), "a".search(m), "ab".split(m));
+const sp = { length: 1, 0: "s", [Symbol.isConcatSpreadable]: true }; console.log([1].concat(sp), [1].concat({ length: 1, 0: "n" }).length); class S2 extends Array { static get [Symbol.species]() { return Array; } } console.log(new S2(1, 2).map((x) => x) instanceof S2);
+console.log(Object.keys(Symbol).length, Symbol.iterator.toString(), Symbol.iterator.description, typeof Symbol.asyncIterator, Array.prototype[Symbol.unscopables].flat, Symbol.for("q").description, Object(Symbol("b")), Object.getOwnPropertySymbols(class { static [Symbol.for("k")] = 1; }).length);

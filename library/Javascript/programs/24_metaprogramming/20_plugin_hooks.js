@@ -1,0 +1,6 @@
+// Hook systems: wrapping functions, before and after advice.
+class Hooks { #h = new Map(); on(n, f) { (this.#h.get(n) ?? this.#h.set(n, []).get(n)).push(f); return this; } run(n, v) { return (this.#h.get(n) ?? []).reduce((x, f) => f(x), v); } }
+const h = new Hooks().on("t", (s) => s.trim()).on("t", (s) => s.toUpperCase()); console.log(h.run("t", " hi "), h.run("none", 1));
+const around = (o, m, w) => { const f = o[m]; o[m] = function (...a) { return w.call(this, f.bind(this), ...a); }; return () => { o[m] = f; }; }; const svc = { n: 2, mul(x) { return x * this.n; } }; const L = []; const off = around(svc, "mul", (nx, x) => { L.push("before " + x); const r = nx(x + 1); L.push("after " + r); return r; }); console.log(svc.mul(1), L); off(); console.log(svc.mul(1), L.length);
+const mw = (...f) => (ctx) => { const go = (i) => (i < f.length ? f[i](ctx, () => go(i + 1)) : ctx); return go(0); }; const trace = []; mw((c, n) => { trace.push("a>"); n(); trace.push("<a"); }, (c, n) => { c.v = 1; trace.push("b"); n(); }, (c, n) => { trace.push("c" + c.v); })({}); console.log(trace);
+const auto = (o) => { for (const k of Object.getOwnPropertyNames(Object.getPrototypeOf(o))) if (k !== "constructor" && typeof o[k] === "function") o[k] = o[k].bind(o); return o; }; class B { n = 1; get() { return this.n; } } const { get } = auto(new B()); console.log(get());

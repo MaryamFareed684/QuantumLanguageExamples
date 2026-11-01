@@ -1,0 +1,5 @@
+// Pattern matching: KMP table, Z-function and Rabin-Karp.
+const zf = (s) => { const z = [0]; for (let i = 1, l = 0, r = 0; i < s.length; i++) { z[i] = i < r ? Math.min(r - i, z[i - l]) : 0; while (s[z[i]] !== undefined && s[z[i]] === s[i + z[i]]) z[i]++; if (i + z[i] > r) { l = i; r = i + z[i]; } } return z; };
+console.log(zf("aabxaabxcaabxaabxay"), zf("aaaaa"), zf("abc"));
+const find = (t, p) => { const z = zf(p + "\0" + t), o = []; z.forEach((v, i) => { if (v === p.length) o.push(i - p.length - 1); }); return o; }; console.log(find("abracadabra", "abra"), find("aaaa", "aa"), find("abc", "x"));
+const rk = (t, p) => { const B = 131, M = 1000000007; let hp = 0, ht = 0, pw = 1; for (let i = 0; i < p.length; i++) { hp = (hp * B + p.charCodeAt(i)) % M; ht = (ht * B + t.charCodeAt(i)) % M; if (i) pw = (pw * B) % M; } const o = []; for (let i = 0; i + p.length <= t.length; i++) { if (ht === hp && t.slice(i, i + p.length) === p) o.push(i); ht = ((ht - (t.charCodeAt(i) * pw) % M + M) * B + t.charCodeAt(i + p.length)) % M; } return o; }; console.log(rk("the cat sat on the mat", "the"), rk("mississippi", "issi"));

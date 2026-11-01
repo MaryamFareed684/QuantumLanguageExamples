@@ -1,0 +1,3 @@
+// timers/promises, util.promisify and callback conversion.
+const { setTimeout: sl, setImmediate: si } = require("timers/promises"); const u = require("util");
+(async () => { console.log(await sl(1, "v1"), await si("v2")); const cbf = (a, b, cb) => setTimeout(() => (a < 0 ? cb(new Error("neg")) : cb(null, a + b)), 1); const pf = u.promisify(cbf); console.log(await pf(1, 2)); await pf(-1, 0).catch((e) => console.log(e.message)); const cb = u.callbackify(async (x) => x * 2); cb(4, (e, v) => console.log(e, v)); console.log(typeof u.promisify(setTimeout)); console.log(await u.promisify(setTimeout)(1, "custom")); })();
